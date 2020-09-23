@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatelessWidget {
-  Color _color = Colors.red;
+  final Color _color = Colors.red;
+  final String number = '+977 9818225533';
+  void _launchURl({String url, String scheme}) async {
+    Uri _mylauncher = Uri(
+      scheme: scheme,
+      path: url,
+    );
+
+    if (await canLaunch(_mylauncher.toString())) {
+      await launch(_mylauncher.toString());
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   Widget _info(String info, String data) {
     return Column(
@@ -10,7 +23,17 @@ class Profile extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: ListTile(
-            onTap: () {},
+            onTap: () {
+              if (info == 'Email') {
+                _launchURl(url: data, scheme: 'mailto');
+              } else if (info == 'Phone') {
+                _launchURl(url: data, scheme: 'tel');
+              } else if (info == 'Message') {
+                _launchURl(url: data, scheme: 'sms');
+              } else {
+                _launchURl(url: data, scheme: 'https');
+              }
+            },
             title: Text(
               info,
               style: TextStyle(color: _color, fontSize: 15),
@@ -55,7 +78,11 @@ class Profile extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: _color,
-                  child: IconButton(icon: Icon(Icons.phone), onPressed: () {}),
+                  child: IconButton(
+                      icon: Icon(Icons.phone),
+                      onPressed: () {
+                        _launchURl(url: number, scheme: 'tel');
+                      }),
                 ),
                 Column(
                   children: [
@@ -83,8 +110,11 @@ class Profile extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: _color,
-                  child:
-                      IconButton(icon: Icon(Icons.message), onPressed: () {}),
+                  child: IconButton(
+                      icon: Icon(Icons.message),
+                      onPressed: () {
+                        _launchURl(url: number, scheme: 'sms');
+                      }),
                 ),
               ],
             ),
@@ -131,7 +161,7 @@ class Profile extends StatelessWidget {
             ],
           ),
           _info('Email', 'ram@kumar.com'),
-          _info('Phone', '+977 9818225533'),
+          _info('Phone', number),
           _info('Twitter', '@ramkumar'),
           _info('Facebook', 'facebook.com/ramkumar')
         ],
